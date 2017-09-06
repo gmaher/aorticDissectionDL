@@ -9,19 +9,14 @@ def get_image_path(data_dir,image_number):
     source_dir = data_dir+'/Aorta1/Source'
     seg_dir = data_dir+'/Aorta1/Segmentation'
     im = str(image_number)
-    top_folder = '{}/{}/{}'.format(source_dir,im,im)
+    top_folder = '{}/{}'.format(source_dir,im)
 
-    f1 = os.listdir(top_folder)[0]
-    f2 = os.listdir('{}/{}'.format(top_folder,f1))[0]
-
-    source_dir = '{}/{}/{}'.format(top_folder,f1,f2)
+    source_dir = find_root(top_folder)
 
     #now get seg dir
     top_folder = top_folder.replace('Source','Segmentation')
-    f1 = os.listdir(top_folder)[0]
-    f2 = os.listdir('{}/{}'.format(top_folder,f1))[0]
-    seg_dir = '{}/{}/{}'.format(top_folder.replace('Source','Segmentation'),
-        f1,f2)
+    
+    seg_dir = find_root(top_folder)
 
     return source_dir,seg_dir
 
@@ -38,3 +33,9 @@ def get_image_and_label(data_dir,image_number):
     image = dcmToNumpy(source_dir)
     label = dcmToNumpy(seg_dir)
     return image,label
+
+def find_root(path):
+    p = path
+    while(len(os.listdir(p)) == 1):
+        p = p + '/' + os.listdir(p)[0]
+    return p
